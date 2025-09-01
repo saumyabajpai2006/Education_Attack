@@ -1,29 +1,250 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Education Under Attack - Visualizations</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Education Under Attack - Interactive Graphs</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f9f9f9;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            width: 70%;
+            max-width: 800px;
+            margin: 25px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        canvas {
+            max-height: 400px;
+            /* Uniform graph size */
+        }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container mt-4">
-    <h2 class="mb-4">📈 Education Under Attack - Visual Analysis</h2>
 
-    <div class="mb-3">
-        <h4>1️⃣ Yearly Trend of Total Attacks</h4>
-        <img src="{{ url_for('static', filename='yearly_trend.png') }}" class="img-fluid rounded shadow">
+<body>
+
+    <h1>📊 Education Under Attack (2020–2025)</h1>
+
+    <!-- Yearly Trend -->
+    <div class="chart-container">
+        <h2>Attacks per Year</h2>
+        <canvas id="yearChart"></canvas>
     </div>
 
-    <div class="mb-3">
-        <h4>2️⃣ Attack Type Distribution</h4>
-        <img src="{{ url_for('static', filename='attack_types.png') }}" class="img-fluid rounded shadow">
+    <!-- Top Countries -->
+    <div class="chart-container">
+        <h2>Top 10 Countries with Most Attacks</h2>
+        <canvas id="countryChart"></canvas>
     </div>
 
-    <div class="mb-3">
-        <h4>3️⃣ Correlation Heatmap</h4>
-        <img src="{{ url_for('static', filename='heatmap.png') }}" class="img-fluid rounded shadow">
+    <!-- Perpetrators -->
+    <div class="chart-container">
+        <h2>Perpetrator Distribution</h2>
+        <canvas id="perpetratorChart"></canvas>
     </div>
 
-    <a href="/" class="btn btn-primary mt-3">⬅ Back to Predictions</a>
-</div>
+    <!-- Impact -->
+    <div class="chart-container">
+        <h2>Impact on Students vs Educators</h2>
+        <canvas id="impactChart"></canvas>
+    </div>
+
+    <!-- Monthly Trend -->
+    <div class="chart-container">
+        <h2>Monthly Attack Trend (All Years)</h2>
+        <canvas id="monthChart"></canvas>
+    </div>
+
+    <!-- Bubble Chart -->
+    <div class="chart-container">
+        <h2>Severity by Country (Killed, Injured, Kidnapped)</h2>
+        <canvas id="bubbleChart"></canvas>
+    </div>
+
+    <!-- Radar Chart -->
+    <div class="chart-container">
+        <h2>Student vs Educator Impact (Radar)</h2>
+        <canvas id="radarChart"></canvas>
+    </div>
+
+    <!-- Donut Chart -->
+    <div class="chart-container">
+        <h2>Students vs Educators (Donut)</h2>
+        <canvas id="donutChart"></canvas>
+    </div>
+
+    <script>
+        // Data from dataset
+        const yearlyLabels = ["2020", "2021", "2022", "2023", "2024", "2025"];
+        const yearlyData = [436, 696, 787, 1013, 1332, 343];
+
+        const countryLabels = ["Myanmar", "Ukraine", "OPT", "Syria", "Nigeria", "Ethiopia", "Yemen", "Burkina Faso", "Sudan", "Afghanistan"];
+        const countryData = [983, 693, 605, 205, 201, 149, 136, 134, 132, 114];
+
+        const perpetratorLabels = ["NSA", "Other", "Foreign Forces - Military", "Host Government: Military", "No Information", "Police", "Multiple", "Civilian", "Vigilante", "Criminal"];
+        const perpetratorData = [1202, 1033, 726, 580, 465, 242, 110, 72, 66, 59];
+
+        const impactLabels = ["Students Killed", "Students Injured", "Students Kidnapped", "Students Arrested", "Educators Killed", "Educators Injured", "Educators Arrested"];
+        const impactData = [617, 2578, 2021, 1084, 557, 573, 1591];
+
+        const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const monthData = [522, 438, 397, 337, 413, 386, 228, 280, 375, 432, 405, 394];
+
+        // Yearly Trend (Line)
+        new Chart(document.getElementById("yearChart"), {
+            type: "line",
+            data: {
+                labels: yearlyLabels,
+                datasets: [{
+                    label: "Number of Attacks",
+                    data: yearlyData,
+                    borderColor: "blue",
+                    backgroundColor: "lightblue",
+                    fill: true,
+                    tension: 0.3
+                }]
+            }
+        });
+
+        // Top Countries (Bar)
+        new Chart(document.getElementById("countryChart"), {
+            type: "bar",
+            data: {
+                labels: countryLabels,
+                datasets: [{
+                    label: "Number of Attacks",
+                    data: countryData,
+                    backgroundColor: "orange"
+                }]
+            },
+            options: { indexAxis: 'y' }
+        });
+
+        // Perpetrators (Pie → smaller)
+        new Chart(document.getElementById("perpetratorChart"), {
+            type: "pie",
+            data: {
+                labels: perpetratorLabels,
+                datasets: [{
+                    data: perpetratorData,
+                    backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#C9CBCF", "#8AFFC1", "#FF6B6B", "#6A5ACD"]
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // Impact (Bar)
+        new Chart(document.getElementById("impactChart"), {
+            type: "bar",
+            data: {
+                labels: impactLabels,
+                datasets: [{
+                    label: "Number of People",
+                    data: impactData,
+                    backgroundColor: "teal"
+                }]
+            }
+        });
+
+        // Monthly Trend (Line)
+        new Chart(document.getElementById("monthChart"), {
+            type: "line",
+            data: {
+                labels: monthLabels,
+                datasets: [{
+                    label: "Number of Attacks",
+                    data: monthData,
+                    borderColor: "red",
+                    backgroundColor: "pink",
+                    fill: true,
+                    tension: 0.3
+                }]
+            }
+        });
+
+        // Bubble Chart (example with few countries + severity values)
+        new Chart(document.getElementById("bubbleChart"), {
+            type: "bubble",
+            data: {
+                datasets: [
+                    {
+                        label: "Myanmar",
+                        data: [{ x: 983, y: 617, r: 20 }],
+                        backgroundColor: "rgba(255,99,132,0.6)"
+                    },
+                    {
+                        label: "Ukraine",
+                        data: [{ x: 693, y: 2578, r: 25 }],
+                        backgroundColor: "rgba(54,162,235,0.6)"
+                    },
+                    {
+                        label: "OPT",
+                        data: [{ x: 605, y: 2021, r: 22 }],
+                        backgroundColor: "rgba(255,206,86,0.6)"
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: "Total Attacks" } },
+                    y: { title: { display: true, text: "Students Killed" } }
+                }
+            }
+        });
+
+        // Radar Chart (Students vs Educators)
+        new Chart(document.getElementById("radarChart"), {
+            type: "radar",
+            data: {
+                labels: ["Killed", "Injured", "Arrested"],
+                datasets: [
+                    {
+                        label: "Students",
+                        data: [617, 2578, 1084],
+                        backgroundColor: "rgba(54,162,235,0.2)",
+                        borderColor: "blue"
+                    },
+                    {
+                        label: "Educators",
+                        data: [557, 573, 1591],
+                        backgroundColor: "rgba(255,99,132,0.2)",
+                        borderColor: "red"
+                    }
+                ]
+            }
+        });
+
+        // Donut Chart (Students vs Educators total impact)
+        new Chart(document.getElementById("donutChart"), {
+            type: "doughnut",
+            data: {
+                labels: ["Students", "Educators"],
+                datasets: [{
+                    data: [617 + 2578 + 2021 + 1084, 557 + 573 + 1591],
+                    backgroundColor: ["#36A2EB", "#FF6384"]
+                }]
+            }
+        });
+    </script>
+
 </body>
+
 </html>

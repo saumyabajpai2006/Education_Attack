@@ -1,67 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Education Attack Prediction</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | Education Under Attack</title>
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:Arial, sans-serif;}
+    body {background:#fdfdfd; color:#222; line-height:1.6;}
+
+    /* Navbar */
+    nav {
+      background:#111; 
+      color:white;
+      padding:15px 40px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:sticky;
+      top:0;
+      z-index:1000;
+    }
+    nav .logo {
+      font-size:1.4em; 
+      font-weight:bold;
+      color:#f87171;
+    }
+    nav ul {
+      list-style:none;
+      display:flex;
+      gap:25px;
+    }
+    nav ul li a {
+      color:white;
+      text-decoration:none;
+      font-weight:bold;
+      transition:0.3s;
+    }
+    nav ul li a:hover {
+      color:#f87171;
+    }
+
+
+    /* Hero */
+    .hero {
+      background:url('https://images.unsplash.com/photo-1523580494863-6f3031224c94') center/cover no-repeat;
+      height:65vh; display:flex; align-items:center; justify-content:center;
+      position:relative; color:white; text-align:center;
+    }
+    .hero::after {
+      content:""; position:absolute; inset:0; background:rgba(0,0,0,0.65);
+    }
+    .hero h1 {position:relative; font-size:3em;}
+
+    section {padding:60px 40px;}
+
+    /* Overview */
+    .overview {max-width:900px; margin:auto; text-align:center;}
+    .overview p {font-size:1.1em; color:#444;}
+
+    /* Mission & Vision */
+    .mv-section {background:#fffafa;}
+    .mv-cards {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:30px; margin-top:40px;
+    }
+    .mv-card {
+      background:#fff; border-radius:12px; padding:25px;
+      box-shadow:0 6px 15px rgba(0,0,0,0.12); transition:.3s;
+      display:flex; align-items:center; gap:15px;
+    }
+    .mv-card img {width:70px; height:70px; object-fit:cover; border-radius:8px;}
+    .mv-card:hover {transform:translateY(-8px);}
+    .mv-card h3 {margin-bottom:8px; color:#dc2626;}
+
+    /* Timeline */
+    .timeline {max-width:950px; margin:auto; position:relative; padding-left:40px;}
+    .timeline::before {
+      content:""; position:absolute; left:20px; top:0; bottom:0; width:4px; background:#dc2626;
+    }
+    .timeline-item {margin-bottom:40px; position:relative; padding:20px 20px 20px 60px; background:#fffafa; border-radius:12px; box-shadow:0 3px 8px rgba(0,0,0,0.08);}
+    .timeline-item::before {
+      content:""; position:absolute; left:12px; top:25px;
+      width:18px; height:18px; border-radius:50%; background:#111; border:3px solid #dc2626;
+    }
+    .timeline-item h4 {margin-bottom:6px; color:#111;}
+    .timeline-item img {width:40px; height:40px; position:absolute; right:15px; top:15px;}
+
+    /* Challenges Section */
+.challenges {background:#f9f9f9; padding:60px 40px;}
+.challenge-boxes {
+  display:grid; 
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:25px;
+}
+.challenge {
+  background:#fff; border-radius:12px; overflow:hidden;
+  box-shadow:0 6px 15px rgba(0,0,0,0.12);
+  transition:transform .3s;
+  display:flex; flex-direction:column;
+}
+.challenge:hover {transform:translateY(-8px);}
+.challenge-img img {
+  width:100%; height:200px; object-fit:cover;
+}
+.challenge-content {padding:20px;}
+.challenge-content h3 {margin:10px 0; color:#dc2626;}
+.challenge-content .solution {color:#16a34a;}
+.challenge-content p {color:#444;}
+
+
+    /* Impact */
+    .impact-stats {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:20px; text-align:center;
+    }
+    .impact-box {
+      padding:25px; border-radius:12px; background:#111; color:white;
+      box-shadow:0 6px 15px rgba(0,0,0,0.15);
+      transition:.3s;
+    }
+    .impact-box:hover {transform:scale(1.05);}
+    .impact-box h2 {font-size:2em; margin-bottom:8px; color:#facc15;}
+
+    /* CTA */
+    .cta {background:#111; color:white; text-align:center; padding:60px 30px;}
+    .cta h2 {margin-bottom:20px;}
+    .cta a {
+      display:inline-block; padding:12px 24px; border-radius:6px;
+      background:#dc2626; color:white; text-decoration:none; font-weight:bold;
+      transition:.3s;
+    }
+    .cta a:hover {background:#b91c1c;}
+  </style>
 </head>
-<body class="container mt-5">
-    <h1 class="mb-4">Education Attack Prediction System</h1>
-    
-    {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
-    {% endif %}
+<body>
 
-    <form method="POST" class="mb-4">
-        <div class="mb-3">
-            <label class="form-label">Select Model Type:</label>
-            <select name="model_type" class="form-select" required>
-                <option value="risk">Risk Assessment</option>
-                <option value="attack_count">Attack Count Prediction</option>
-                <option value="forecast">Time Series Forecast</option>
-                <option value="hotspot">Hotspot Detection</option>
-            </select>
-        </div>
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">EduAttack</div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="prediction.html">Prediction</a></li>
+      <li><a href="visualization.html">Visualization</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+  </nav>
 
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <label class="form-label">Year:</label>
-                <input type="number" name="year" class="form-control" min="2020" max="2030" required>
-            </div>
-            <div class="col-md-4 mb-3">
-                <label class="form-label">Month:</label>
-                <input type="number" name="month" class="form-control" min="1" max="12" required>
-            </div>
-            <div class="col-md-4 mb-3">
-                <label class="form-label">Country:</label>
-                <input type="text" name="country" class="form-control" required>
-            </div>
-        </div>
+  <!-- Hero -->
+  <section class="hero">
+    <h1>About Our Project</h1>
+  </section>
 
-        <div class="mb-3">
-            <label class="form-label">Previous Attacks (if any):</label>
-            <input type="number" name="attacks" class="form-control" min="0" value="0">
-        </div>
+  <!-- Overview -->
+  <section class="overview">
+    <h2>Project Overview</h2>
+    <p>
+      The <b>Education Under Attack (2020–2025)</b> project documents threats, challenges, and impacts 
+      faced by education systems worldwide due to conflicts, attacks on schools, and policy gaps. 
+      This initiative highlights data-driven insights to create awareness and drive global solutions.
+    </p>
+  </section>
 
-        <button type="submit" class="btn btn-primary">Predict</button>
-    </form>
-
-    {% if prediction %}
-    <div class="card">
-        <div class="card-header">
-            <h3>Prediction Results</h3>
+  <!-- Mission & Vision -->
+  <section class="mv-section">
+    <h2 style="text-align:center;">Mission & Vision</h2>
+    <div class="mv-cards">
+      <div class="mv-card">
+        <img src="https://img.icons8.com/fluency/96/goal.png" alt="Mission">
+        <div>
+          <h3>Our Mission</h3>
+          <p>To analyze and visualize patterns of attacks on education, and provide actionable insights to policymakers and stakeholders.</p>
         </div>
-        <div class="card-body">
-            {% if 'table' in prediction %}
-                {{ prediction|safe }}
-            {% else %}
-                <p class="lead">{{ prediction }}</p>
-            {% endif %}
+      </div>
+      <div class="mv-card">
+        <img src="https://img.icons8.com/color/96/vision.png" alt="Vision">
+        <div>
+          <h3>Our Vision</h3>
+          <p>A world where every child has safe access to schools without fear of conflict, violence, or discrimination.</p>
         </div>
+      </div>
     </div>
-    {% endif %}
+  </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Timeline -->
+  <section>
+    <h2 style="text-align:center;">Timeline (2020–2025)</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <h4>2020</h4>
+        <p>Initial reports highlight increased targeting of schools in conflict regions.</p>
+        <img src="https://img.icons8.com/ios-filled/50/education.png" alt="">
+      </div>
+      <div class="timeline-item">
+        <h4>2021–2022</h4>
+        <p>Data collection expanded to cover multiple continents with case studies.</p>
+        <img src="https://img.icons8.com/ios-filled/50/globe-earth.png" alt="">
+      </div>
+      <div class="timeline-item">
+        <h4>2023</h4>
+        <p>Integration of visualization dashboards and interactive reports.</p>
+        <img src="https://img.icons8.com/ios-filled/50/combo-chart.png" alt="">
+      </div>
+      <div class="timeline-item">
+        <h4>2024–2025</h4>
+        <p>Advanced predictive modeling to identify potential high-risk areas for the future.</p>
+        <img src="https://img.icons8.com/ios-filled/50/artificial-intelligence.png" alt="">
+      </div>
+    </div>
+  </section>
+
+    <!-- Challenges & Solutions -->
+  <section class="challenges">
+    <h2 style="text-align:center; margin-bottom:40px;">Challenges & Solutions</h2>
+    <div class="challenge-boxes">
+      
+      <div class="challenge">
+        <div class="challenge-img">
+          <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df" alt="Data Challenge">
+        </div>
+        <div class="challenge-content">
+          <h3>Challenge</h3>
+          <p>Lack of reliable real-time data on school attacks made tracking difficult.</p>
+          <h3 class="solution">Solution</h3>
+          <p>Integrated multiple datasets & NGO reports for higher accuracy.</p>
+        </div>
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-img">
+          <img src="https://images.unsplash.com/photo-1607799279861-4dd421887fb3"  alt="Gender Impact">
+        </div>
+        <div class="challenge-content">
+          <h3>Challenge</h3>
+          <p>Limited awareness of gender-specific impacts of attacks.</p>
+          <h3 class="solution">Solution</h3>
+          <p>Focused analysis on disparities and published visual gender-based insights.</p>
+        </div>
+      </div>
+
+      <div class="challenge">
+        <div class="challenge-img">
+          <img src="https://images.unsplash.com/photo-1588072432836-e10032774350" alt="Policy Gaps">
+        </div>
+        <div class="challenge-content">
+          <h3>Challenge</h3>
+          <p>Policy gaps in high-risk regions left schools vulnerable.</p>
+          <h3 class="solution">Solution</h3>
+          <p>Provided data-backed recommendations to strengthen education policies.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- Impact Stats -->
+  <section class="impact">
+    <h2 style="text-align:center; margin-bottom:40px;">Our Impact</h2>
+    <div class="impact-stats">
+      <div class="impact-box">
+        <h2>35+</h2>
+        <p>Countries Covered</p>
+      </div>
+      <div class="impact-box">
+        <h2>500+</h2>
+        <p>Schools Reported</p>
+      </div>
+      <div class="impact-box">
+        <h2>1M+</h2>
+        <p>Students Affected</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Explore Our Findings</h2>
+    <p>Discover interactive dashboards, datasets, and insights.</p>
+    <a href="index.html">Go to Dashboard</a>
+  </section>
+
 </body>
 </html>

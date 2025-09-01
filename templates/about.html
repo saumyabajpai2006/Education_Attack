@@ -3,261 +3,219 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Education Under Attack</title>
+  <title>About | Education Under Attack</title>
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; background: #f4f4f4; color:#333; }
-    nav {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 15px 40px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      position: sticky; top:0; z-index:1000;
-    }
-    nav h1 { color: #c62828; }
-    nav a { margin-left: 20px; text-decoration: none; color: #333; font-weight: bold; }
-    nav a:hover { color: #c62828; }
+    * {margin:0; padding:0; box-sizing:border-box; font-family:Arial, sans-serif;}
 
-   /* Hero Section (dark overlay) */
+    body {background:#fdfdfd; color:#222; line-height:1.6;}
+
+    /* Navbar */
+    nav {
+      background:#111; 
+      color:white;
+      padding:15px 40px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:sticky;
+      top:0;
+      z-index:1000;
+    }
+    nav .logo {
+      font-size:1.4em; 
+      font-weight:bold;
+      color:#f87171;
+    }
+    nav ul {
+      list-style:none;
+      display:flex;
+      gap:25px;
+    }
+    nav ul li a {
+      color:white;
+      text-decoration:none;
+      font-weight:bold;
+      transition:0.3s;
+    }
+    nav ul li a:hover {
+      color:#f87171;
+    }
+
+    /* Hero */
     .hero {
-      position: relative; height: 85vh;
-      background: url("https://images.unsplash.com/photo-1529070538774-1843cb3265df") no-repeat center/cover;
-      display: flex; align-items: center; justify-content: center; text-align: center; color: white;
+      background:url('https://images.unsplash.com/photo-1523580494863-6f3031224c94') center/cover no-repeat;
+      height:65vh; display:flex; align-items:center; justify-content:center;
+      position:relative; color:white; text-align:center;
     }
     .hero::after {
-      content: ""; position: absolute; top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.65); /* Dark overlay */
+      content:""; position:absolute; inset:0; background:rgba(0,0,0,0.65);
     }
-    .hero-content {
-      position: relative; z-index: 1; max-width: 700px;
-    }
-    .hero h2 { font-size: 3em; margin-bottom: 15px; }
-    .hero p { font-size: 1.3em; margin-bottom: 20px; }
-    .btn {
-      padding: 12px 25px; background: #c62828; border: none; color: white;
-      font-size: 1em; font-weight: bold; cursor: pointer; border-radius: 6px;
-    }
-    .btn:hover { background: #a21616; }
+    .hero h1 {position:relative; font-size:3em;}
 
+    section {padding:60px 40px;}
 
-    /* Cards Section */
-    .cards {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px; padding: 60px;
-    }
-    .card {
-      position: relative; overflow: hidden; border-radius: 12px; cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1); background:white;
-    }
-    .card img { width: 100%; height: 200px; object-fit: cover; transition: transform 0.4s; }
-    .card:hover img { transform: scale(1.05); }
-    .card h3 { margin:15px; font-size:1.3em; color:#c62828; }
-    .card p { margin:0 15px 20px; font-size:0.95em; line-height:1.4; }
+    /* Section Base */
+    section {padding:60px 40px;}
 
-    /* Stats Section */
-    .stats { background:#fff; padding:80px 20px; text-align:center; }
-    .stats h2 { margin-bottom:40px; font-size:2em; }
-    .stat-box { display:inline-block; margin:20px 40px; }
-    .stat-number { font-size:2.5em; color:#c62828; font-weight:bold; }
-    .stat-label { font-size:1.2em; margin-top:10px; }
+    /* Overview */
+    .overview {max-width:900px; margin:auto; text-align:center;}
+    .overview p {font-size:1.1em; color:#444;}
 
-    /* Key Findings Section (Improved) */
-    .findings { padding:80px 40px; background:#fafafa; text-align:center; }
-    .findings h2 { font-size:2em; margin-bottom:40px; }
-    .finding-grid {
-      display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
-      gap:30px; max-width:1100px; margin:0 auto;
+    /* Mission & Vision */
+    .mv-cards {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:25px; margin-top:40px;
     }
-    .finding {
-      position: relative; border-radius:14px; overflow:hidden;
-      min-height: 240px; display:flex; align-items:flex-end;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-      background-size: cover; background-position: center;
-      color:white; cursor:pointer; transition: transform 0.4s ease;
+    .mv-card {
+      background:#fff; border-radius:12px; padding:25px;
+      box-shadow:0 6px 15px rgba(0,0,0,0.1); transition:transform .3s;
+      text-align:center;
     }
-    .finding::after {
-      content:""; position:absolute; top:0; left:0; right:0; bottom:0;
-      background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.2));
-    }
-    .finding:hover { transform: translateY(-8px) scale(1.02); }
-    .finding-content {
-      position:relative; z-index:2; padding:20px; text-align:left;
-    }
-    .finding h3 { margin:0 0 10px; font-size:1.3em; }
-    .finding p { font-size:0.95em; line-height:1.5; }
+    .mv-card:hover {transform:translateY(-8px);}
+    .mv-card img {width:60px; margin-bottom:15px;}
+    .mv-card h3 {margin-bottom:10px; color:#dc2626;}
 
-    /* Reports Section */
-    .reports { padding:80px 40px; background:#fff; }
-    .reports h2 { text-align:center; font-size:2em; margin-bottom:40px; }
-    .report-grid {
-      display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
-      gap:25px; max-width:1100px; margin:0 auto;
+    /* Challenges */
+    .challenges {background:#f8f9fa;}
+    .challenge-boxes {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:25px; margin-top:30px;
     }
-    .report-card {
-      border-radius:12px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.1);
-      background:#fafafa; transition:transform 0.3s;
+    .challenge {
+      background:#fff; padding:25px; border-radius:12px;
+      box-shadow:0 6px 15px rgba(0,0,0,0.1); transition:.3s;
     }
-    .report-card:hover { transform:scale(1.02); }
-    .report-card img { width:100%; height:180px; object-fit:cover; }
-    .report-card div { padding:20px; }
-    .report-card h3 { margin:0 0 10px; color:#c62828; }
-    .report-card p { font-size:0.95em; line-height:1.5; }
+    .challenge:hover {transform:scale(1.02);}
+    .challenge img {width:100%; border-radius:8px; margin-bottom:15px;}
+    .challenge h3 {margin-bottom:10px; color:#dc2626;}
+    .challenge h4 {margin:10px 0; color:#16a34a;}
+
+    /* Impact Stats */
+    .impact-stats {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:20px; text-align:center;
+    }
+    .impact-box {
+      padding:25px; border-radius:12px; background:#111; color:white;
+      box-shadow:0 6px 15px rgba(0,0,0,0.15);
+    }
+    .impact-box h2 {font-size:2em; margin-bottom:8px; color:#facc15;}
 
     /* CTA */
-    .cta { background: #c62828; color: white; text-align: center; padding: 60px 20px; }
-    .cta h2 { font-size: 2em; margin-bottom: 10px; }
-    .cta p { margin-bottom: 20px; font-size: 1.1em; }
-
-    /* Footer */
-    footer {
-      background:#222; color:#aaa; padding:30px; text-align:center;
+    .cta {
+      background:#dc2626; color:white; text-align:center;
+      padding:60px 30px;
     }
-    footer a { color:#fff; text-decoration:none; margin:0 10px; }
-    footer a:hover { text-decoration:underline; }
+    .cta h2 {margin-bottom:20px;}
+    .cta a {
+      display:inline-block; padding:12px 24px; border-radius:6px;
+      background:#facc15; color:#222; text-decoration:none; font-weight:bold;
+      transition:.3s;
+    }
+    .cta a:hover {background:#eab308;}
   </style>
 </head>
 <body>
 
   <!-- Navbar -->
   <nav>
-    <h1>Education Under Attack</h1>
-    <div>
-      <a href="#">Home</a>
-      <a href="#">Dashboard</a>
-      <a href="#">Dataset</a>
-      <a href="#">Insights</a>
-    </div>
+    <div class="logo">EduAttack</div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="prediction.html">Prediction</a></li>
+      <li><a href="visualization.html">Visualization</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
   </nav>
 
-  <!-- Hero Section -->
+  <!-- Hero -->
   <section class="hero">
-    <div class="hero-content">
-      <h2>Protecting Education in Conflict Zones</h2>
-      <p>A data-driven look into global attacks on education from 2020–2025.</p>
-      <button class="btn">Explore Dashboard</button>
-    </div>
-  </section>
-
-  <!-- Interactive Cards -->
-  <section class="cards">
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1588072432836-e10032774350" alt="Attacks on Schools">
-      <h3>Attacks on Schools</h3>
-      <p>Explore data on schools targeted in conflict zones and analyze trends.</p>
-    </div>
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df" alt="Impact on Students">
-      <h3>Impact on Students</h3>
-      <p>See how children’s education is disrupted and what it means for the future.</p>
-    </div>
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1562564055-71e051d33c19" alt="Global Hotspots">
-      <h3>Global Hotspots</h3>
-      <p>Visualize regions most impacted by attacks and their intensity levels.</p>
-    </div>
-  </section>
-
-  <!-- Stats Section -->
-  <section class="stats">
-    <h2>Global Impact (2020–2025)</h2>
-    <div class="stat-box">
-      <div class="stat-number" data-target="1500">0</div>
-      <div class="stat-label">Schools Attacked</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-number" data-target="120000">0</div>
-      <div class="stat-label">Students Affected</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-number" data-target="45">0</div>
-      <div class="stat-label">Countries Impacted</div>
-    </div>
-  </section>
-
-  <!-- Key Findings Section -->
-  <section class="findings">
-    <h2>Key Findings</h2>
-    <div class="finding-grid">
-      <div class="finding" style="background-image:url('https://images.unsplash.com/photo-1509062522246-3755977927d7');">
-        <div class="finding-content">
-          <h3>📉 Decline in Attendance</h3>
-          <p>Regions with frequent school attacks showed up to 35% decline in student attendance.</p>
-        </div>
-      </div>
-      <div class="finding" style="background-image:url('https://images.unsplash.com/photo-1588072432836-e10032774350');">
-        <div class="finding-content">
-          <h3>🚸 Girls at Risk</h3>
-          <p>Girls are disproportionately impacted, with dropout rates nearly double compared to boys.</p>
-        </div>
-      </div>
-      <div class="finding" style="background-image:url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b');">
-        <div class="finding-content">
-          <h3>🌍 Hotspot Countries</h3>
-          <p>Most cases reported in 5 countries, contributing to 70% of global attacks.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Reports Section -->
-  <section class="reports">
-    <h2>Latest Reports & Insights</h2>
-    <div class="report-grid">
-      <div class="report-card">
-        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b" alt="">
-        <div>
-          <h3>Regional Dashboard</h3>
-          <p>Interactive visualization showing regional breakdown of education-related attacks.</p>
-        </div>
-      </div>
-      <div class="report-card">
-        <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d" alt="">
-        <div>
-          <h3>Impact Analysis</h3>
-          <p>Statistical insights into how these attacks disrupt learning outcomes and literacy rates.</p>
-        </div>
-      </div>
-      <div class="report-card">
-        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="">
-        <div>
-          <h3>Prediction Models</h3>
-          <p>Forecasting future trends based on data from 2020–2025 for policymakers & NGOs.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="cta">
-    <h2>Want to see more insights?</h2>
-    <p>Dive deeper into the dataset and predictions we built.</p>
-    <button class="btn">Go to Visualizations</button>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 Education Under Attack Project | Designed for awareness</p>
     <div>
-      <a href="#">Privacy</a> | <a href="#">Contact</a> | <a href="#">Donate</a>
+      <h1>About Our Project</h1>
+      <p>Understanding and visualizing the threats to education systems across the globe (2020–2025).</p>
     </div>
-  </footer>
+  </section>
 
-  <script>
-    // Animated Stats Counter
-    const counters = document.querySelectorAll('.stat-number');
-    const speed = 100;
-    counters.forEach(counter => {
-      const updateCount = () => {
-        const target = +counter.getAttribute('data-target');
-        const count = +counter.innerText;
-        const increment = Math.ceil(target / speed);
-        if (count < target) {
-          counter.innerText = count + increment;
-          setTimeout(updateCount, 50);
-        } else {
-          counter.innerText = target.toLocaleString();
-        }
-      };
-      updateCount();
-    });
-  </script>
+  <!-- Overview -->
+  <section class="overview">
+    <h2>Project Overview</h2>
+    <p>
+      The <b>Education Under Attack (2020–2025)</b> project documents threats, challenges, and impacts 
+      faced by education systems worldwide due to conflicts, attacks on schools, and policy gaps. 
+      This initiative highlights data-driven insights to create awareness and drive global solutions.
+    </p>
+  </section>
+
+  <!-- Mission & Vision -->
+  <section>
+    <h2 style="text-align:center;">Mission & Vision</h2>
+    <div class="mv-cards">
+      <div class="mv-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Mission">
+        <h3>Our Mission</h3>
+        <p>To analyze and visualize patterns of attacks on education, and provide actionable insights to policymakers and stakeholders.</p>
+      </div>
+      <div class="mv-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135679.png" alt="Vision">
+        <h3>Our Vision</h3>
+        <p>A world where every child has safe access to schools without fear of conflict, violence, or discrimination.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Challenges & Solutions -->
+  <section class="challenges">
+    <h2 style="text-align:center;">Challenges & Solutions</h2>
+    <div class="challenge-boxes">
+      <div class="challenge">
+        <img src="https://images.unsplash.com/photo-1607799279861-4dd421887fb3" alt="Challenge">
+        <h3>Challenge</h3>
+        <p>Lack of reliable real-time data on school attacks made tracking difficult.</p>
+        <h4>Solution</h4>
+        <p>Integrated multiple datasets & NGO reports for higher accuracy.</p>
+      </div>
+      <div class="challenge">
+        <img src="https://images.unsplash.com/photo-1588072432836-e10032774350" alt="Challenge">
+        <h3>Challenge</h3>
+        <p>Limited awareness of gender-specific impacts of attacks.</p>
+        <h4>Solution</h4>
+        <p>Focused analysis on disparities and published visual gender-based insights.</p>
+      </div>
+      <div class="challenge">
+        <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433" alt="Challenge">
+        <h3>Challenge</h3>
+        <p>Policy gaps in high-risk regions left schools vulnerable.</p>
+        <h4>Solution</h4>
+        <p>Provided data-backed recommendations to strengthen education policies.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Stats -->
+  <section class="impact">
+    <h2 style="text-align:center; margin-bottom:40px;">Our Impact</h2>
+    <div class="impact-stats">
+      <div class="impact-box">
+        <h2>35+</h2>
+        <p>Countries Covered</p>
+      </div>
+      <div class="impact-box">
+        <h2>500+</h2>
+        <p>Schools Reported</p>
+      </div>
+      <div class="impact-box">
+        <h2>1M+</h2>
+        <p>Students Affected</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Explore Our Findings</h2>
+    <p>Discover interactive dashboards, datasets, and insights.</p>
+    <a href="index.html">Go to Dashboard</a>
+  </section>
 
 </body>
 </html>
