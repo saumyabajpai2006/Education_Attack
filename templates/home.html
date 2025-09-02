@@ -77,8 +77,13 @@
     .card {
       position: relative; overflow: hidden; border-radius: 12px; cursor: pointer;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1); background:white;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .card img { width: 100%; height: 200px; object-fit: cover; transition: transform 0.4s; }
+    .card:hover { 
+      transform: translateY(-10px); 
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
     .card:hover img { transform: scale(1.05); }
     .card h3 { margin:15px; font-size:1.3em; color:#c62828; }
     .card p { margin:0 15px 20px; font-size:0.95em; line-height:1.4; }
@@ -142,9 +147,9 @@
     <h1>Education Under Attack</h1>
     <div>
       <a href="about.html">About</a>
-      <a href="#">Dashboard</a>
-      <a href="#">Dataset</a>
-      <a href="#">Insights</a>
+      <a href="/xgboost-prediction">XGBoost</a>
+      <a href="/timeseries-forecast">Forecast</a>
+      <a href="/hotspot-detection">Hotspots</a>
     </div>
   </nav>
 
@@ -159,20 +164,20 @@
 
   <!-- Interactive Cards -->
   <section class="cards">
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1588072432836-e10032774350" alt="Attacks on Schools">
-      <h3>Attacks on Schools</h3>
-      <p>Explore data on schools targeted in conflict zones and analyze trends.</p>
+    <div class="card" onclick="window.location.href='/xgboost-prediction'" style="cursor: pointer;">
+      <img src="https://images.unsplash.com/photo-1588072432836-e10032774350" alt="XGBoost Prediction">
+      <h3>🎯 XGBoost Prediction</h3>
+      <p>Predict attack counts using our advanced machine learning model with 99.99% accuracy.</p>
     </div>
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df" alt="Impact on Students">
-      <h3>Impact on Students</h3>
-      <p>See how children’s education is disrupted and what it means for the future.</p>
+    <div class="card" onclick="window.location.href='/timeseries-forecast'" style="cursor: pointer;">
+      <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df" alt="Time Series Forecast">
+      <h3>📈 Time Series Forecast</h3>
+      <p>Forecast future attack trends using Prophet model with 2.20% MAPE accuracy.</p>
     </div>
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1562564055-71e051d33c19" alt="Global Hotspots">
-      <h3>Global Hotspots</h3>
-      <p>Visualize regions most impacted by attacks and their intensity levels.</p>
+    <div class="card" onclick="window.location.href='/hotspot-detection'" style="cursor: pointer;">
+      <img src="https://images.unsplash.com/photo-1562564055-71e051d33c19" alt="Hotspot Detection">
+      <h3>🔥 Hotspot Detection</h3>
+      <p>Identify high-risk geographic areas with 100% accuracy hotspot detection.</p>
     </div>
   </section>
 
