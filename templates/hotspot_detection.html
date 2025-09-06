@@ -261,22 +261,17 @@
                     <label for="country">Country:</label>
                     <select id="country" name="country" required>
                         <option value="">Select Country</option>
-                        <option value="Afghanistan">Afghanistan</option>
-                        <option value="Syria">Syria</option>
-                        <option value="Yemen">Yemen</option>
-                        <option value="Iraq">Iraq</option>
-                        <option value="Nigeria">Nigeria</option>
-                        <option value="Somalia">Somalia</option>
-                        <option value="Mali">Mali</option>
-                        <option value="Burkina Faso">Burkina Faso</option>
-                        <option value="Cameroon">Cameroon</option>
-                        <option value="Chad">Chad</option>
+                        {% for country in countries %}
+                        <option value="{{ country }}">{{ country }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="admin1">Admin Region/Province:</label>
-                    <input type="text" id="admin1" name="admin1" placeholder="Enter admin region or province" required>
+                    <select id="admin1" name="admin1" required disabled>
+                        <option value="">Select Country First</option>
+                    </select>
                 </div>
                 
                 <button type="submit" class="btn-detect">🔍 Detect Hotspot</button>
@@ -361,6 +356,38 @@
     </div>
 
     <script>
+        // Handle country selection to load admin regions
+        document.getElementById('country').addEventListener('change', async function(e) {
+            const country = e.target.value;
+            const adminSelect = document.getElementById('admin1');
+            
+            if (country) {
+                try {
+                    const response = await fetch(`/get-admin-regions/${encodeURIComponent(country)}`);
+                    const adminRegions = await response.json();
+                    
+                    // Clear existing options
+                    adminSelect.innerHTML = '<option value="">Select Admin Region</option>';
+                    
+                    // Add new options
+                    adminRegions.forEach(region => {
+                        const option = document.createElement('option');
+                        option.value = region;
+                        option.textContent = region;
+                        adminSelect.appendChild(option);
+                    });
+                    
+                    adminSelect.disabled = false;
+                } catch (error) {
+                    console.error('Error loading admin regions:', error);
+                    adminSelect.innerHTML = '<option value="">Error loading regions</option>';
+                }
+            } else {
+                adminSelect.innerHTML = '<option value="">Select Country First</option>';
+                adminSelect.disabled = true;
+            }
+        });
+
         document.getElementById('detectionForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
