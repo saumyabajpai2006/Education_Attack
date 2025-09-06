@@ -263,7 +263,7 @@ footer a {
         <h2>Sign in/up Form</h2>
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
-		<form action="{{ url_for('signup') }}">
+		<form action="{{ url_for('signup') }}" method="post">
 			<h1>Create Account</h1>
 			<div class="social-container">
 				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -278,7 +278,7 @@ footer a {
 		</form>
 	</div>
 	<div class="form-container sign-in-container">
-		<form action="{{ url_for('signin') }}">
+		<form action="{{ url_for('signin') }}" method="post">
 			<h1>Sign in</h1>
 			<div class="social-container">
 				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>

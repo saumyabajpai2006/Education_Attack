@@ -59,6 +59,24 @@ def home():
 def about():
     return render_template("about.html")
 
+@app.route('/Signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        existing_user = User.query.filter((User.username==username)|(User.email==email)).first()
+        if existing_user:
+            flash('Username or email already exists')
+        else:
+            hashed_password = generate_password_hash(password)
+            new_user = User(username=username, email=email, password=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Registration successful! Please login.')
+            return redirect(url_for('signup'))
+    return render_template('login.html')
+
 # Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -74,24 +92,6 @@ def login():
         else:
             flash('Invalid email or password.', 'danger')
     
-    return render_template('login.html')
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        existing_user = User.query.filter((User.username==username)|(User.email==email)).first()
-        if existing_user:
-            flash('Username or email already exists')
-        else:
-            hashed_password = generate_password_hash(password)
-            new_user = User(username=username, email=email, password=hashed_password)
-            db.session.add(new_user)
-            db.session.commit()
-            flash('Registration successful! Please login.')
-            return redirect(url_for('login'))
     return render_template('login.html')
 
 @app.route("/xgboost-prediction")
