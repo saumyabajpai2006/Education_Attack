@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
 import joblib
 import numpy as np
 import pandas as pd
@@ -9,8 +9,22 @@ import seaborn as sns
 from datetime import datetime, timedelta
 import io
 import base64
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_bcrypt import bcrypt
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
 
 # Load the dataset
 df = pd.read_excel('analysis2/models/2020-2025-education-in-danger-incident-data.xlsx')
@@ -36,9 +50,40 @@ def home():
 def about():
     return render_template("about.html")
 
-@app.route("/login")
+# Login Route
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template("login.html")
+    if request.method == 'POST':
+        email_or_username = request.form['email']
+        password = request.form['password']
+        
+        user = User.query.filter_by(email=email_or_username).first() or User.query.filter_by(username=email_or_username).first()
+        if user and bcrypt.check_password_hash(user.password, password):
+            login_user(user)
+            flash('Login successful!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash('Invalid email or password.', 'danger')
+    
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        existing_user = User.query.filter((User.username==username)|(User.email==email)).first()
+        if existing_user:
+            flash('Username or email already exists')
+        else:
+            hashed_password = generate_password_hash(password)
+            new_user = User(username=username, email=email, password=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Registration successful! Please login.')
+            return redirect(url_for('login'))
+    return render_template('login.html')
 
 @app.route("/xgboost-prediction")
 def xgboost_prediction():
@@ -145,4 +190,7 @@ def detect_hotspots():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
+    if not os.path.exists("users.db"):
+        with app.app_context():
+            db.create_all()
     app.run(debug=True)
