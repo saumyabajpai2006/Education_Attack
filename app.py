@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 import joblib
 import numpy as np
 import pandas as pd
@@ -9,10 +9,10 @@ import seaborn as sns
 from datetime import datetime, timedelta
 import io
 import base64
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
+# from flask_sqlalchemy import SQLAlchemy
+# from werkzeug.security import generate_password_hash, check_password_hash
 # Removed bcrypt to use werkzeug hashing consistently
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+# from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import json
 import nbformat
 import plotly.io as pio
@@ -20,26 +20,26 @@ import plotly.io as pio
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-db = SQLAlchemy(app)
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+# db = SQLAlchemy(app)
 
 # Flask-Login setup
-login_manager = LoginManager()
-login_manager.login_view = 'login'
-login_manager.init_app(app)
+# login_manager = LoginManager()
+# login_manager.login_view = 'login'
+# login_manager.init_app(app)
 
-@login_manager.user_loader
-def load_user(user_id):
-    try:
-        return User.query.get(int(user_id))
-    except Exception:
-        return None
+# @login_manager.user_loader
+# def load_user(user_id):
+#     try:
+#         return User.query.get(int(user_id))
+#     except Exception:
+#         return None
 
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
+# class User(UserMixin, db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(150), unique=True, nullable=False)
+#     email = db.Column(db.String(150), unique=True, nullable=False)
+#     password = db.Column(db.String(150), nullable=False)
 
 # Load the dataset
 try:
@@ -74,67 +74,62 @@ def home():
 def about():
     return render_template("about.html")
 
-@app.route('/Signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        existing_user = User.query.filter((User.username==username)|(User.email==email)).first()
-        if existing_user:
-            flash('Username or email already exists')
-        else:
-            hashed_password = generate_password_hash(password)
-            new_user = User(username=username, email=email, password=hashed_password)
-            db.session.add(new_user)
-            db.session.commit()
-            flash('Registration successful! Please login.')
-            return redirect(url_for('signup'))
-    return render_template('login.html')
+# @app.route('/Signup', methods=['GET', 'POST'])
+# def signup():
+#     if request.method == 'POST':
+#         username = request.form['username']
+#         email = request.form['email']
+#         password = request.form['password']
+#         existing_user = User.query.filter((User.username==username)|(User.email==email)).first()
+#         if existing_user:
+#             flash('Username or email already exists')
+#         else:
+#             hashed_password = generate_password_hash(password)
+#             new_user = User(username=username, email=email, password=hashed_password)
+#             db.session.add(new_user)
+#             db.session.commit()
+#             flash('Registration successful! Please login.')
+#             return redirect(url_for('signup'))
+#     return render_template('login.html')
 
 # Login Route
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email_or_username = request.form['email']
-        password = request.form['password']
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'POST':
+#         email_or_username = request.form['email']
+#         password = request.form['password']
         
-        user = User.query.filter_by(email=email_or_username).first() or User.query.filter_by(username=email_or_username).first()
-        if user and check_password_hash(user.password, password):
-            login_user(user)
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
-        else:
-            flash('Invalid email or password.', 'danger')
+#         user = User.query.filter_by(email=email_or_username).first() or User.query.filter_by(username=email_or_username).first()
+#         if user and check_password_hash(user.password, password):
+#             login_user(user)
+#             flash('Login successful!', 'success')
+#             return redirect(url_for('home'))
+#         else:
+#             flash('Invalid email or password.', 'danger')
     
-    return render_template('login.html')
+#     return render_template('login.html')
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    flash('Logged out successfully.', 'success')
-    return redirect(url_for('login'))
+# Authentication routes and decorators intentionally disabled per request
 
 @app.route("/xgboost-prediction")
-@login_required
+# @login_required
 def xgboost_prediction():
     return render_template("xgboost_prediction.html")
 
 @app.route("/timeseries-forecast")
-@login_required
+# @login_required
 def timeseries_forecast():
     return render_template("timeseries_forecast.html")
 
 @app.route("/hotspot-detection")
-@login_required
+# @login_required
 def hotspot_detection():
     # Get unique countries from dataset
     countries = sorted(df['Country'].unique().tolist())
     return render_template("hotspot_detection.html", countries=countries)
 
 @app.route("/graphs")
-@login_required
+# @login_required
 def graphs():
     try:
         notebook_path = os.path.join("analysis2", "models", "graphs.ipynb")
@@ -573,7 +568,7 @@ def detect_hotspots():
         return jsonify({"error": f"Analysis failed: {str(e)}"}), 500
 
 if __name__ == "__main__":
-    if not os.path.exists("users.db"):
-        with app.app_context():
-            db.create_all()
+    # if not os.path.exists("users.db"):
+    #     with app.app_context():
+    #         db.create_all()
     app.run(debug=True)
