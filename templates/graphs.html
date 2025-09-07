@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #f5f7fb;
+      --color-text: #0f172a;
+      --color-muted: #475569;
+      --color-primary: #1d4ed8;
+      --color-primary-700: #1e40af;
+      --color-surface: #ffffff;
+      --shadow-md: 0 6px 18px rgba(2, 6, 23, 0.08);
+      --radius-md: 12px;
+    }
+
+    body { margin:0; font-family: 'Inter', Arial, sans-serif; background: var(--color-bg); color: var(--color-text); }
+
+    /* Topbar */
+    .topbar { position: sticky; top:0; z-index: 1000; background: rgba(2,6,23,0.85); color:#fff; padding: 12px 28px; display:flex; align-items:center; justify-content: space-between; backdrop-filter: saturate(140%) blur(10px); border-bottom:1px solid rgba(255,255,255,0.12); }
+    .brand { font-weight: 800; letter-spacing: .4px; color:#93c5fd; text-decoration:none; }
+    .top-actions a { color:#e2e8f0; text-decoration:none; margin-left:16px; font-weight:600; }
+    .top-actions a:hover { color:#fff; }
+
+    /* Page */
+    .page { padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .header { display:flex; align-items:center; justify-content: space-between; margin: 18px 0 10px; }
+    .header h2 { margin:0; font-size: 1.6em; }
+    .sub { color: var(--color-muted); margin-top: 6px; }
+
+    /* Grid */
+    .grid { display:grid; grid-template-columns: 1fr; gap: 24px; }
+    .card { background: var(--color-surface); border:1px solid rgba(2,6,23,0.06); border-radius: var(--radius-md); box-shadow: var(--shadow-md); overflow: hidden; }
+    .card-header { padding: 14px 16px; border-bottom:1px solid #eef2f7; display:flex; align-items:center; justify-content: space-between; }
+    .card-title { margin:0; font-size: 1.05em; color: var(--color-primary); font-weight: 800; }
+    .card-body { padding: 10px 12px; }
+    .insights { padding: 14px 16px 16px; background: #f8fafc; border-top:1px solid #eef2f7; }
+    .insights h4 { margin: 0 0 8px; font-size: .95em; color:#0f172a; }
+    .insight-grid { display:grid; grid-template-columns: 1fr; gap: 10px; }
+    .insight-block { background:#fff; border:1px solid #eef2f7; border-radius:10px; padding:10px 12px; }
+    .insight-title { margin:0 0 6px; font-size:.9em; color:#334155; font-weight:800; }
+    .insight-body { margin:0; color: var(--color-muted); font-size:.92em; }
+    .insights ul { margin:0; padding-left: 18px; color: var(--color-muted); }
+    .insights li { margin: 4px 0; }
+
+    /* Flash messages */
+    .flash { margin: 12px 0; padding: 10px 12px; border-radius:8px; background:#fee2e2; color:#991b1b; border:1px solid #fecaca; }
+
+    @media (min-width: 860px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a class="brand" href="{{ url_for('home') }}">Education Under Attack</a>
+    <div class="top-actions">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('xgboost_prediction') }}">Visualizations</a>
+      <a href="{{ url_for('timeseries_forecast') }}">Forecast</a>
+      <a href="{{ url_for('hotspot_detection') }}">Hotspots</a>
+    </div>
+  </div>
+
+  <div class="page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="header">
+      <div>
+        <h2>Analytics Dashboard</h2>
+        <div class="sub">Interactive charts from the latest notebook with auto-generated insights.</div>
+      </div>
+    </div>
+
+    {% if graphs and graphs|length > 0 %}
+      <div class="grid">
+        {% for g in graphs %}
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">{{ g.title }}</h3>
+            </div>
+            <div class="card-body">
+              {{ g.html|safe }}
+            </div>
+            <div class="insights">
+              <h4>Conclusion</h4>
+              <p class="insight-body">{{ g.insights.conclusion or 'This chart provides a visual breakdown of the selected metric.' }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No graphs found in the notebook.</p>
+    {% endif %}
+  </div>
+
+</body>
+</html>
+
+
