@@ -538,8 +538,13 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
       <li><a href="{{ url_for('about') }}">About</a></li>
+      {% if current_user.is_authenticated %}
       <li><a href="{{ url_for('timeseries_forecast') }}">Forecast</a></li>
       <li><a href="{{ url_for('hotspot_detection') }}">Hotspots</a></li>
+      <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      {% else %}
+      <li><a href="{{ url_for('login') }}">Login</a></li>
+      {% endif %}
       <li><a href="{{ url_for('graphs') }}">Dashboard</a></li>
       {# Authentication nav removed per request
       {% if current_user.is_authenticated %}
