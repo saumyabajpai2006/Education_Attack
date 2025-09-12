@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Series Forecast - Education Under Attack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            min-height: 100vh;
-            color: #333;
-        }
+        :root { --color-bg: #f5f7fb; --color-text: #0f172a; --color-muted: #475569; --color-primary: #1d4ed8; --color-primary-700: #1e40af; --color-primary-50: #eff6ff; --color-surface: #ffffff; --color-nav: rgba(2, 6, 23, 0.85); --shadow-md: 0 6px 18px rgba(2, 6, 23, 0.08); --radius-md: 12px; }
+        body { margin: 0; font-family: 'Inter', Arial, sans-serif; background: var(--color-bg); min-height: 100vh; color: var(--color-text); }
+        nav { background: var(--color-nav); color: white; padding: 12px 40px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; backdrop-filter: saturate(140%) blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
+        nav .logo { font-size: 1.4em; font-weight: 700; color: #93c5fd; text-decoration: none; }
+        nav .logo:hover { color: #dbeafe; }
+        nav .nav-links { list-style: none; display: flex; gap: 8px; margin: 0; padding: 0; }
+        nav .nav-links li a { color: #e2e8f0; text-decoration: none; font-weight: 600; padding: 10px 16px; border-radius: 8px; transition: all 0.3s ease; display: block; }
+        nav .nav-links li a:hover { color: #fff; background-color: rgba(255, 255, 255, 0.15); transform: translateY(-1px); }
+        nav .nav-links li a.active { color: #fff; background-color: var(--color-primary); box-shadow: 0 2px 8px rgba(29, 78, 216, 0.3); }
         
         .container {
             max-width: 1200px;
@@ -20,22 +23,9 @@
             padding: 20px;
         }
         
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            color: white;
-        }
-        
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
+        .header { text-align: center; margin-bottom: 24px; color: var(--color-text); }
+        .header h1 { font-size: 2em; margin-bottom: 8px; }
+        .header p { color: var(--color-muted); }
         
         .forecast-card {
             background: white;
@@ -139,12 +129,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         
-        .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #11998e;
-            margin-bottom: 10px;
-        }
+        .stat-value { font-size: 1.6em; font-weight: 700; color: var(--color-primary); margin-bottom: 8px; }
         
         .stat-label {
             color: #666;
@@ -270,6 +255,16 @@
     </style>
 </head>
 <body>
+    <nav>
+        <a href="{{ url_for('home') }}" class="logo">Education Under Attack</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('timeseries_forecast') }}" class="active">Forecast</a></li>
+            <li><a href="{{ url_for('hotspot_detection') }}">Hotspots</a></li>
+            <li><a href="{{ url_for('graphs') }}">Dashboard</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <div class="header">
             <h1>📈 Time Series Forecast</h1>

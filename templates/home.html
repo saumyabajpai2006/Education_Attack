@@ -539,13 +539,20 @@
       <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
       <li><a href="{{ url_for('about') }}">About</a></li>
       {% if current_user.is_authenticated %}
-      <li><a href="{{ url_for('xgboost_prediction') }}">XGBoost</a></li>
       <li><a href="{{ url_for('timeseries_forecast') }}">Forecast</a></li>
       <li><a href="{{ url_for('hotspot_detection') }}">Hotspots</a></li>
       <li><a href="{{ url_for('logout') }}">Logout</a></li>
       {% else %}
       <li><a href="{{ url_for('login') }}">Login</a></li>
       {% endif %}
+      <li><a href="{{ url_for('graphs') }}">Dashboard</a></li>
+      {# Authentication nav removed per request
+      {% if current_user.is_authenticated %}
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      {% else %}
+        <li><a href="{{ url_for('login') }}">Login</a></li>
+      {% endif %}
+      #}
     </ul>
   </nav>
 
@@ -561,15 +568,15 @@
 
   <!-- Interactive Cards -->
   <section class="cards" id="cards">
-    <div class="card" onclick="window.location.href=`{{ url_for('xgboost_prediction') }}`" style="cursor: pointer;">
+    <div class="card" onclick="window.location.href=`{{ url_for('graphs') }}`" style="cursor: pointer;">
       <div class="card-media">
-        <img src="https://images.unsplash.com/photo-1588072432836-e10032774350" alt="XGBoost Prediction">
-        <span class="badge">Visualize</span>
+        <img src="https://images.unsplash.com/photo-1588072432836-e10032774350" alt="Analytics Dashboard">
+        <span class="badge">Dashboard</span>
       </div>
       <div class="card-body">
-        <h3>🎯 Data Visualization</h3>
-        <p>Analyze trends, perpetrators, and regions affected using interactive charts.</p>
-        <a class="card-cta" href="{{ url_for('xgboost_prediction') }}" aria-label="Open data visualization">Open</a>
+        <h3>🎯 Analytics Dashboard</h3>
+        <p>Explore interactive charts and conclusions derived from the dataset.</p>
+        <a class="card-cta" href="{{ url_for('graphs') }}" aria-label="Open analytics dashboard">Open</a>
       </div>
     </div>
     <div class="card" onclick="window.location.href=`{{ url_for('timeseries_forecast') }}`" style="cursor: pointer;">
