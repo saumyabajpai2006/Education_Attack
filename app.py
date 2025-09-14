@@ -9,6 +9,9 @@ import seaborn as sns
 from datetime import datetime, timedelta
 import io
 import base64
+import json
+import nbformat
+import plotly.io as pio
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -509,40 +512,64 @@ def detect_hotspots():
         educators_killed = region_data['Educators Killed'].sum()
         educators_injured = region_data['Educators Injured'].sum()
         
-        # Enhanced risk assessment
+        # Enhanced risk assessment with comprehensive scoring (0-14 scale)
+        # This provides more granular risk assessment based on multiple factors
         risk_score = 0
+        
+        # Attack frequency scoring (0-4 points)
         if total_attacks > 20:
+            risk_score += 4
+        elif total_attacks > 15:
             risk_score += 3
         elif total_attacks > 10:
             risk_score += 2
         elif total_attacks > 5:
             risk_score += 1
             
-        if students_killed > 5:
+        # Student casualties scoring (0-4 points)
+        if students_killed > 10:
+            risk_score += 4
+        elif students_killed > 5:
             risk_score += 3
         elif students_killed > 2:
             risk_score += 2
         elif students_killed > 0:
             risk_score += 1
             
-        if educators_killed > 2:
+        # Educator casualties scoring (0-3 points)
+        if educators_killed > 5:
+            risk_score += 3
+        elif educators_killed > 2:
             risk_score += 2
         elif educators_killed > 0:
             risk_score += 1
+            
+        # Student injuries scoring (0-2 points)
+        if students_injured > 20:
+            risk_score += 2
+        elif students_injured > 10:
+            risk_score += 1
+            
+        # Educator injuries scoring (0-1 point)
+        if educators_injured > 10:
+            risk_score += 1
         
-        # Determine risk level
-        if risk_score >= 6:
+        # Determine risk level based on comprehensive scoring (0-14 scale)
+        if risk_score >= 10:
             risk_level = "Critical Risk"
             risk_color = "#8B0000"
-        elif risk_score >= 4:
+        elif risk_score >= 7:
             risk_level = "High Risk"
             risk_color = "#FF4500"
-        elif risk_score >= 2:
+        elif risk_score >= 4:
             risk_level = "Medium Risk"
             risk_color = "#FFA500"
-        else:
+        elif risk_score >= 1:
             risk_level = "Low Risk"
             risk_color = "#32CD32"
+        else:
+            risk_level = "Very Low Risk"
+            risk_color = "#00FF00"
         
         # Get recent attacks (last 30 days if available)
         recent_attacks = 0

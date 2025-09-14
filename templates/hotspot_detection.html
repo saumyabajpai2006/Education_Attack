@@ -323,7 +323,7 @@
                 </div>
                 
                 <div class="map-container">
-                    <h4>🗺️ Geographic Visualization</h4>
+                    <!-- <h4>🗺️ Geographic Visualization</h4> -->
                     <div class="map-placeholder" id="mapPlaceholder">
                         <div style="text-align: center;">
                             <p>📍 Location: <span id="locationDisplay">-</span></p>
@@ -447,36 +447,56 @@
                     totalAttacks.textContent = result.total_attacks;
                     schoolAttacks.textContent = Math.floor(result.total_attacks * 0.7);
                     universityAttacks.textContent = Math.floor(result.total_attacks * 0.3);
-                    riskScore.textContent = result.total_attacks * 10;
+                    riskScore.textContent = result.risk_score;
                     
                     // Update map placeholder
                     locationDisplay.textContent = result.region;
                     riskDisplay.textContent = result.risk_level;
                     attackDisplay.textContent = result.total_attacks;
                     
-                    // Generate recommendations
+                    // Generate recommendations based on comprehensive risk levels
                     let recommendations = [];
-                    if (result.risk_level === 'High Risk') {
+                    if (result.risk_level === 'Critical Risk') {
+                        recommendations = [
+                            '🚨 IMMEDIATE ACTION REQUIRED',
+                            'Deploy maximum security forces',
+                            'Implement emergency evacuation plans',
+                            'Close schools if necessary',
+                            'Coordinate with military/police',
+                            'Establish 24/7 monitoring',
+                            'Provide trauma counseling for students'
+                        ];
+                    } else if (result.risk_level === 'High Risk') {
                         recommendations = [
                             'Implement enhanced security measures',
                             'Increase police presence around schools',
                             'Establish emergency response protocols',
                             'Conduct regular security audits',
-                            'Provide security training for staff'
+                            'Provide security training for staff',
+                            'Install surveillance systems'
                         ];
                     } else if (result.risk_level === 'Medium Risk') {
                         recommendations = [
                             'Monitor security situation closely',
                             'Implement basic security protocols',
                             'Establish communication with local authorities',
-                            'Conduct risk assessments regularly'
+                            'Conduct risk assessments regularly',
+                            'Train staff on emergency procedures'
                         ];
-                    } else {
+                    } else if (result.risk_level === 'Low Risk') {
                         recommendations = [
                             'Maintain current security measures',
                             'Stay informed about regional developments',
                             'Have emergency plans ready',
-                            'Regular security reviews'
+                            'Regular security reviews',
+                            'Keep communication channels open'
+                        ];
+                    } else {
+                        recommendations = [
+                            'Continue monitoring',
+                            'Maintain basic security protocols',
+                            'Stay updated with regional news',
+                            'Regular safety drills'
                         ];
                     }
                     
