@@ -21,7 +21,7 @@ import plotly.io as pio
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config['SECRET_KEY'] = 'saumya78bajpai'
 # Ensure absolute DB path inside instance folder
 basedir = os.path.abspath(os.path.dirname(__file__))
 instance_dir = os.path.join(basedir, 'instance')
