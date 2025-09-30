@@ -12,11 +12,19 @@ import base64
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import nbformat
+import json
+import plotly.io as pio
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/users.db'
+# Ensure absolute DB path inside instance folder
+basedir = os.path.abspath(os.path.dirname(__file__))
+instance_dir = os.path.join(basedir, 'instance')
+os.makedirs(instance_dir, exist_ok=True)
+database_path = os.path.join(instance_dir, 'users.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + database_path.replace('\\', '/')
 db = SQLAlchemy(app)
 
 # Flask-Login setup
@@ -569,7 +577,7 @@ def detect_hotspots():
         return jsonify({"error": f"Analysis failed: {str(e)}"}), 500
 
 if __name__ == "__main__":
-    if not os.path.exists("instance/users.db"):
+    if not os.path.exists(database_path):
         with app.app_context():
             db.create_all()
     app.run(debug=True)
