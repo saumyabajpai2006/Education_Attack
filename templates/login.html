@@ -403,8 +403,8 @@
 
 	// ===== FORM VALIDATION =====
 
-	// Email validation regex
-	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	// Email validation regex (max one subdomain)
+	const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/;
 
 	// Get form elements
 	const signupForm = document.getElementById('signupForm');
