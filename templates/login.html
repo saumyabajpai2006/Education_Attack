@@ -261,6 +261,64 @@
 		color: #3c97bf;
 		text-decoration: none;
 	}
+
+	/* Validation Styles */
+	.error-message {
+		color: #FF4B2B;
+		font-size: 11px;
+		margin-top: -5px;
+		margin-bottom: 5px;
+		text-align: left;
+		width: 100%;
+		display: none;
+		padding-left: 5px;
+	}
+
+	.error-message.show {
+		display: block;
+	}
+
+	input.invalid {
+		border: 2px solid #FF4B2B !important;
+		background-color: #fff5f5;
+	}
+
+	input.valid {
+		border: 2px solid #4CAF50 !important;
+		background-color: #f0fff4;
+	}
+
+	.password-requirements {
+		font-size: 11px;
+		text-align: left;
+		margin: 5px 0;
+		color: #666;
+		width: 100%;
+		padding-left: 5px;
+	}
+
+	.password-requirements li {
+		list-style: none;
+		margin: 3px 0;
+	}
+
+	.password-requirements li.met {
+		color: #4CAF50;
+	}
+
+	.password-requirements li.not-met {
+		color: #FF4B2B;
+	}
+
+	.password-requirements li::before {
+		content: "✗ ";
+		margin-right: 5px;
+		font-weight: bold;
+	}
+
+	.password-requirements li.met::before {
+		content: "✓ ";
+	}
 </style>
 
 <body>
@@ -268,7 +326,7 @@
 		<h2>Sign in/up Form</h2>
 		<div class="container" id="container">
 			<div class="form-container sign-up-container">
-				<form action="{{ url_for('signup') }}" method="post">
+				<form action="{{ url_for('signup') }}" method="post" id="signupForm" novalidate>
 					<h1>Create Account</h1>
 					<div class="social-container">
 						<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -276,14 +334,25 @@
 						<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 					</div>
 					<span>or use your email for registration</span>
-					<input type="text" name="username" placeholder="Name" required />
-					<input type="email" name="email" placeholder="Email" required />
-					<input type="password" name="password" placeholder="Password" required />
-					<button>Sign Up</button>
+					<input type="text" name="username" id="signupUsername" placeholder="Name" required minlength="3" />
+					<div class="error-message" id="signupUsernameError">Username must be at least 3 characters</div>
+					
+					<input type="email" name="email" id="signupEmail" placeholder="Email" required />
+					<div class="error-message" id="signupEmailError">Please enter a valid email address</div>
+					
+					<input type="password" name="password" id="signupPassword" placeholder="Password" required minlength="6" />
+					<div class="error-message" id="signupPasswordError">Password must be at least 6 characters</div>
+					<ul class="password-requirements" id="passwordRequirements" style="display: none;">
+						<li id="req-length" class="not-met">At least 6 characters</li>
+						<li id="req-number" class="not-met">Contains a number</li>
+						<li id="req-letter" class="not-met">Contains a letter</li>
+					</ul>
+					
+					<button type="submit">Sign Up</button>
 				</form>
 			</div>
 			<div class="form-container sign-in-container">
-				<form action="{{ url_for('login') }}" method="post">
+				<form action="{{ url_for('login') }}" method="post" id="loginForm" novalidate>
 					<h1>Sign in</h1>
 					<div class="social-container">
 						<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
@@ -291,10 +360,13 @@
 						<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 					</div>
 					<span>or use your account</span>
-					<input type="email" name="email" placeholder="Email or Username" required />
-					<input type="password" name="password" placeholder="Password" required />
+					<input type="text" name="email" id="loginEmail" placeholder="Email or Username" required />
+					<div class="error-message" id="loginEmailError">Email or Username is required</div>
 					
-					<button>Sign In</button>
+					<input type="password" name="password" id="loginPassword" placeholder="Password" required minlength="6" />
+					<div class="error-message" id="loginPasswordError">Password is required</div>
+					
+					<button type="submit">Sign In</button>
 				</form>
 			</div>
 			<div class="overlay-container">
@@ -327,6 +399,291 @@
 
 	signInButton.addEventListener('click', () => {
 		container.classList.remove("right-panel-active");
+	});
+
+	// ===== FORM VALIDATION =====
+
+	// Email validation regex
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+	// Get form elements
+	const signupForm = document.getElementById('signupForm');
+	const signupUsername = document.getElementById('signupUsername');
+	const signupEmail = document.getElementById('signupEmail');
+	const signupPassword = document.getElementById('signupPassword');
+	const passwordRequirements = document.getElementById('passwordRequirements');
+
+	const loginForm = document.getElementById('loginForm');
+	const loginEmail = document.getElementById('loginEmail');
+	const loginPassword = document.getElementById('loginPassword');
+
+	// === SIGNUP FORM VALIDATIONS ===
+
+	// Real-time validation for signup username
+	if (signupUsername) {
+		signupUsername.addEventListener('input', function() {
+			const value = this.value.trim();
+			const errorDiv = document.getElementById('signupUsernameError');
+			
+			if (value.length === 0) {
+				this.classList.remove('valid', 'invalid');
+				errorDiv.classList.remove('show');
+			} else if (value.length < 3) {
+				this.classList.add('invalid');
+				this.classList.remove('valid');
+				errorDiv.textContent = 'Username must be at least 3 characters';
+				errorDiv.classList.add('show');
+			} else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+				this.classList.add('invalid');
+				this.classList.remove('valid');
+				errorDiv.textContent = 'Username can only contain letters, numbers, and underscores';
+				errorDiv.classList.add('show');
+			} else {
+				this.classList.add('valid');
+				this.classList.remove('invalid');
+				errorDiv.classList.remove('show');
+			}
+		});
+	}
+
+	// Real-time validation for signup email
+	if (signupEmail) {
+		signupEmail.addEventListener('input', function() {
+			const value = this.value.trim();
+			const errorDiv = document.getElementById('signupEmailError');
+			
+			if (value.length === 0) {
+				this.classList.remove('valid', 'invalid');
+				errorDiv.classList.remove('show');
+			} else if (!emailRegex.test(value)) {
+				this.classList.add('invalid');
+				this.classList.remove('valid');
+				errorDiv.textContent = 'Please enter a valid email address';
+				errorDiv.classList.add('show');
+			} else {
+				this.classList.add('valid');
+				this.classList.remove('invalid');
+				errorDiv.classList.remove('show');
+			}
+		});
+	}
+
+	// Real-time validation for signup password with requirements
+	if (signupPassword) {
+		signupPassword.addEventListener('focus', function() {
+			if (passwordRequirements) {
+				passwordRequirements.style.display = 'block';
+			}
+		});
+
+		signupPassword.addEventListener('input', function() {
+			const value = this.value;
+			const errorDiv = document.getElementById('signupPasswordError');
+			
+			// Check requirements
+			const hasLength = value.length >= 6;
+			const hasNumber = /\d/.test(value);
+			const hasLetter = /[a-zA-Z]/.test(value);
+			
+			// Update requirement indicators
+			const reqLength = document.getElementById('req-length');
+			const reqNumber = document.getElementById('req-number');
+			const reqLetter = document.getElementById('req-letter');
+			
+			if (reqLength) reqLength.className = hasLength ? 'met' : 'not-met';
+			if (reqNumber) reqNumber.className = hasNumber ? 'met' : 'not-met';
+			if (reqLetter) reqLetter.className = hasLetter ? 'met' : 'not-met';
+			
+			// Update field validation
+			if (value.length === 0) {
+				this.classList.remove('valid', 'invalid');
+				errorDiv.classList.remove('show');
+			} else if (hasLength && hasNumber && hasLetter) {
+				this.classList.add('valid');
+				this.classList.remove('invalid');
+				errorDiv.classList.remove('show');
+			} else {
+				this.classList.add('invalid');
+				this.classList.remove('valid');
+				if (!hasLength) {
+					errorDiv.textContent = 'Password must be at least 6 characters';
+				} else if (!hasNumber) {
+					errorDiv.textContent = 'Password must contain at least one number';
+				} else if (!hasLetter) {
+					errorDiv.textContent = 'Password must contain at least one letter';
+				}
+				errorDiv.classList.add('show');
+			}
+		});
+
+		signupPassword.addEventListener('blur', function() {
+			if (this.value.length === 0 && passwordRequirements) {
+				passwordRequirements.style.display = 'none';
+			}
+		});
+	}
+
+	// Signup form submission validation
+	if (signupForm) {
+		signupForm.addEventListener('submit', function(e) {
+			e.preventDefault();
+			
+			let isValid = true;
+			
+			// Validate username
+			const username = signupUsername.value.trim();
+			const usernameError = document.getElementById('signupUsernameError');
+			
+			if (username.length < 3) {
+				signupUsername.classList.add('invalid');
+				usernameError.textContent = 'Username must be at least 3 characters';
+				usernameError.classList.add('show');
+				isValid = false;
+			} else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+				signupUsername.classList.add('invalid');
+				usernameError.textContent = 'Username can only contain letters, numbers, and underscores';
+				usernameError.classList.add('show');
+				isValid = false;
+			}
+			
+			// Validate email
+			const email = signupEmail.value.trim();
+			const emailError = document.getElementById('signupEmailError');
+			
+			if (!emailRegex.test(email)) {
+				signupEmail.classList.add('invalid');
+				emailError.textContent = 'Please enter a valid email address';
+				emailError.classList.add('show');
+				isValid = false;
+			}
+			
+			// Validate password
+			const password = signupPassword.value;
+			const passwordError = document.getElementById('signupPasswordError');
+			const hasLength = password.length >= 6;
+			const hasNumber = /\d/.test(password);
+			const hasLetter = /[a-zA-Z]/.test(password);
+			
+			if (!hasLength || !hasNumber || !hasLetter) {
+				signupPassword.classList.add('invalid');
+				if (!hasLength) {
+					passwordError.textContent = 'Password must be at least 6 characters';
+				} else if (!hasNumber) {
+					passwordError.textContent = 'Password must contain at least one number';
+				} else if (!hasLetter) {
+					passwordError.textContent = 'Password must contain at least one letter';
+				}
+				passwordError.classList.add('show');
+				isValid = false;
+			}
+			
+			if (isValid) {
+				this.submit();
+			} else {
+				// Focus on first error
+				const firstError = this.querySelector('.invalid');
+				if (firstError) {
+					firstError.focus();
+				}
+			}
+		});
+	}
+
+	// === LOGIN FORM VALIDATIONS ===
+
+	// Real-time validation for login email/username
+	if (loginEmail) {
+		loginEmail.addEventListener('input', function() {
+			const value = this.value.trim();
+			const errorDiv = document.getElementById('loginEmailError');
+			
+			if (value.length === 0) {
+				this.classList.remove('valid', 'invalid');
+				errorDiv.classList.remove('show');
+			} else if (value.length < 3) {
+				this.classList.add('invalid');
+				this.classList.remove('valid');
+				errorDiv.textContent = 'Email or Username must be at least 3 characters';
+				errorDiv.classList.add('show');
+			} else {
+				this.classList.add('valid');
+				this.classList.remove('invalid');
+				errorDiv.classList.remove('show');
+			}
+		});
+	}
+
+	// Real-time validation for login password
+	if (loginPassword) {
+		loginPassword.addEventListener('input', function() {
+			const value = this.value;
+			const errorDiv = document.getElementById('loginPasswordError');
+			
+			if (value.length === 0) {
+				this.classList.remove('valid', 'invalid');
+				errorDiv.classList.remove('show');
+			} else if (value.length < 6) {
+				this.classList.add('invalid');
+				this.classList.remove('valid');
+				errorDiv.textContent = 'Password must be at least 6 characters';
+				errorDiv.classList.add('show');
+			} else {
+				this.classList.add('valid');
+				this.classList.remove('invalid');
+				errorDiv.classList.remove('show');
+			}
+		});
+	}
+
+	// Login form submission validation
+	if (loginForm) {
+		loginForm.addEventListener('submit', function(e) {
+			e.preventDefault();
+			
+			let isValid = true;
+			
+			// Validate email/username
+			const emailValue = loginEmail.value.trim();
+			const emailError = document.getElementById('loginEmailError');
+			
+			if (emailValue.length < 3) {
+				loginEmail.classList.add('invalid');
+				emailError.textContent = 'Email or Username is required (minimum 3 characters)';
+				emailError.classList.add('show');
+				isValid = false;
+			}
+			
+			// Validate password
+			const passwordValue = loginPassword.value;
+			const passwordError = document.getElementById('loginPasswordError');
+			
+			if (passwordValue.length < 6) {
+				loginPassword.classList.add('invalid');
+				passwordError.textContent = 'Password must be at least 6 characters';
+				passwordError.classList.add('show');
+				isValid = false;
+			}
+			
+			if (isValid) {
+				this.submit();
+			} else {
+				// Focus on first error
+				const firstError = this.querySelector('.invalid');
+				if (firstError) {
+					firstError.focus();
+				}
+			}
+		});
+	}
+
+	// Clear validation state on focus for all inputs
+	const allInputs = [signupUsername, signupEmail, signupPassword, loginEmail, loginPassword];
+	allInputs.forEach(input => {
+		if (input) {
+			input.addEventListener('focus', function() {
+				this.classList.remove('invalid');
+			});
+		}
 	});
 </script>
 
