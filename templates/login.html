@@ -323,6 +323,7 @@
 
 <body>
 	<div>
+		{% include '_flashes.html' %}
 		<h2>Sign in/up Form</h2>
 		<div class="container" id="container">
 			<div class="form-container sign-up-container">
@@ -336,18 +337,19 @@
 					<span>or use your email for registration</span>
 					<input type="text" name="username" id="signupUsername" placeholder="Name" required minlength="3" />
 					<div class="error-message" id="signupUsernameError">Username must be at least 3 characters</div>
-					
+
 					<input type="email" name="email" id="signupEmail" placeholder="Email" required />
 					<div class="error-message" id="signupEmailError">Please enter a valid email address</div>
-					
-					<input type="password" name="password" id="signupPassword" placeholder="Password" required minlength="6" />
+
+					<input type="password" name="password" id="signupPassword" placeholder="Password" required
+						minlength="6" />
 					<div class="error-message" id="signupPasswordError">Password must be at least 6 characters</div>
 					<ul class="password-requirements" id="passwordRequirements" style="display: none;">
 						<li id="req-length" class="not-met">At least 6 characters</li>
 						<li id="req-number" class="not-met">Contains a number</li>
 						<li id="req-letter" class="not-met">Contains a letter</li>
 					</ul>
-					
+
 					<button type="submit">Sign Up</button>
 				</form>
 			</div>
@@ -362,10 +364,11 @@
 					<span>or use your account</span>
 					<input type="text" name="email" id="loginEmail" placeholder="Email or Username" required />
 					<div class="error-message" id="loginEmailError">Email or Username is required</div>
-					
-					<input type="password" name="password" id="loginPassword" placeholder="Password" required minlength="6" />
+
+					<input type="password" name="password" id="loginPassword" placeholder="Password" required
+						minlength="6" />
 					<div class="error-message" id="loginPasswordError">Password is required</div>
-					
+
 					<button type="submit">Sign In</button>
 				</form>
 			</div>
@@ -421,10 +424,10 @@
 
 	// Real-time validation for signup username
 	if (signupUsername) {
-		signupUsername.addEventListener('input', function() {
+		signupUsername.addEventListener('input', function () {
 			const value = this.value.trim();
 			const errorDiv = document.getElementById('signupUsernameError');
-			
+
 			if (value.length === 0) {
 				this.classList.remove('valid', 'invalid');
 				errorDiv.classList.remove('show');
@@ -448,10 +451,10 @@
 
 	// Real-time validation for signup email
 	if (signupEmail) {
-		signupEmail.addEventListener('input', function() {
+		signupEmail.addEventListener('input', function () {
 			const value = this.value.trim();
 			const errorDiv = document.getElementById('signupEmailError');
-			
+
 			if (value.length === 0) {
 				this.classList.remove('valid', 'invalid');
 				errorDiv.classList.remove('show');
@@ -470,30 +473,30 @@
 
 	// Real-time validation for signup password with requirements
 	if (signupPassword) {
-		signupPassword.addEventListener('focus', function() {
+		signupPassword.addEventListener('focus', function () {
 			if (passwordRequirements) {
 				passwordRequirements.style.display = 'block';
 			}
 		});
 
-		signupPassword.addEventListener('input', function() {
+		signupPassword.addEventListener('input', function () {
 			const value = this.value;
 			const errorDiv = document.getElementById('signupPasswordError');
-			
+
 			// Check requirements
 			const hasLength = value.length >= 6;
 			const hasNumber = /\d/.test(value);
 			const hasLetter = /[a-zA-Z]/.test(value);
-			
+
 			// Update requirement indicators
 			const reqLength = document.getElementById('req-length');
 			const reqNumber = document.getElementById('req-number');
 			const reqLetter = document.getElementById('req-letter');
-			
+
 			if (reqLength) reqLength.className = hasLength ? 'met' : 'not-met';
 			if (reqNumber) reqNumber.className = hasNumber ? 'met' : 'not-met';
 			if (reqLetter) reqLetter.className = hasLetter ? 'met' : 'not-met';
-			
+
 			// Update field validation
 			if (value.length === 0) {
 				this.classList.remove('valid', 'invalid');
@@ -516,7 +519,7 @@
 			}
 		});
 
-		signupPassword.addEventListener('blur', function() {
+		signupPassword.addEventListener('blur', function () {
 			if (this.value.length === 0 && passwordRequirements) {
 				passwordRequirements.style.display = 'none';
 			}
@@ -525,15 +528,15 @@
 
 	// Signup form submission validation
 	if (signupForm) {
-		signupForm.addEventListener('submit', function(e) {
+		signupForm.addEventListener('submit', function (e) {
 			e.preventDefault();
-			
+
 			let isValid = true;
-			
+
 			// Validate username
 			const username = signupUsername.value.trim();
 			const usernameError = document.getElementById('signupUsernameError');
-			
+
 			if (username.length < 3) {
 				signupUsername.classList.add('invalid');
 				usernameError.textContent = 'Username must be at least 3 characters';
@@ -545,25 +548,25 @@
 				usernameError.classList.add('show');
 				isValid = false;
 			}
-			
+
 			// Validate email
 			const email = signupEmail.value.trim();
 			const emailError = document.getElementById('signupEmailError');
-			
+
 			if (!emailRegex.test(email)) {
 				signupEmail.classList.add('invalid');
 				emailError.textContent = 'Please enter a valid email address';
 				emailError.classList.add('show');
 				isValid = false;
 			}
-			
+
 			// Validate password
 			const password = signupPassword.value;
 			const passwordError = document.getElementById('signupPasswordError');
 			const hasLength = password.length >= 6;
 			const hasNumber = /\d/.test(password);
 			const hasLetter = /[a-zA-Z]/.test(password);
-			
+
 			if (!hasLength || !hasNumber || !hasLetter) {
 				signupPassword.classList.add('invalid');
 				if (!hasLength) {
@@ -576,7 +579,7 @@
 				passwordError.classList.add('show');
 				isValid = false;
 			}
-			
+
 			if (isValid) {
 				this.submit();
 			} else {
@@ -593,10 +596,10 @@
 
 	// Real-time validation for login email/username
 	if (loginEmail) {
-		loginEmail.addEventListener('input', function() {
+		loginEmail.addEventListener('input', function () {
 			const value = this.value.trim();
 			const errorDiv = document.getElementById('loginEmailError');
-			
+
 			if (value.length === 0) {
 				this.classList.remove('valid', 'invalid');
 				errorDiv.classList.remove('show');
@@ -615,10 +618,10 @@
 
 	// Real-time validation for login password
 	if (loginPassword) {
-		loginPassword.addEventListener('input', function() {
+		loginPassword.addEventListener('input', function () {
 			const value = this.value;
 			const errorDiv = document.getElementById('loginPasswordError');
-			
+
 			if (value.length === 0) {
 				this.classList.remove('valid', 'invalid');
 				errorDiv.classList.remove('show');
@@ -637,33 +640,33 @@
 
 	// Login form submission validation
 	if (loginForm) {
-		loginForm.addEventListener('submit', function(e) {
+		loginForm.addEventListener('submit', function (e) {
 			e.preventDefault();
-			
+
 			let isValid = true;
-			
+
 			// Validate email/username
 			const emailValue = loginEmail.value.trim();
 			const emailError = document.getElementById('loginEmailError');
-			
+
 			if (emailValue.length < 3) {
 				loginEmail.classList.add('invalid');
 				emailError.textContent = 'Email or Username is required (minimum 3 characters)';
 				emailError.classList.add('show');
 				isValid = false;
 			}
-			
+
 			// Validate password
 			const passwordValue = loginPassword.value;
 			const passwordError = document.getElementById('loginPasswordError');
-			
+
 			if (passwordValue.length < 6) {
 				loginPassword.classList.add('invalid');
 				passwordError.textContent = 'Password must be at least 6 characters';
 				passwordError.classList.add('show');
 				isValid = false;
 			}
-			
+
 			if (isValid) {
 				this.submit();
 			} else {
@@ -680,7 +683,7 @@
 	const allInputs = [signupUsername, signupEmail, signupPassword, loginEmail, loginPassword];
 	allInputs.forEach(input => {
 		if (input) {
-			input.addEventListener('focus', function() {
+			input.addEventListener('focus', function () {
 				this.classList.remove('invalid');
 			});
 		}

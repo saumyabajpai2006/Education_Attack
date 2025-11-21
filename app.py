@@ -11,13 +11,12 @@ import io
 import base64
 import json
 import nbformat
+import json
 import plotly.io as pio
+import plotly.graph_objects as go
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-import nbformat
-import json
-import plotly.io as pio
 
 
 app = Flask(__name__)
@@ -32,7 +31,7 @@ db = SQLAlchemy(app)
 
 # Flask-Login setup
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'login'  # type: ignore
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -85,16 +84,20 @@ def signup():
         password = request.form.get('password', '')
         existing_user = User.query.filter((User.username==username)|(User.email==email)).first()
         if existing_user:
-            flash('Username or email already exists')
+            flash('Username or email already exists', 'warning')
+            return redirect(url_for('signup'))
         else:
             if not username or not email or not password:
-                flash('All fields are required.')
-                return render_template('login.html')
+                flash('All fields are required.', 'warning')
+                return redirect(url_for('signup'))
             hashed_password = generate_password_hash(password)
-            new_user = User(username=username, email=email, password=hashed_password)
+            new_user = User()
+            new_user.username = username
+            new_user.email = email
+            new_user.password = hashed_password
             db.session.add(new_user)
             db.session.commit()
-            flash('Registration successful! Please login.')
+            flash('Registration successful! Please login.', 'success')
             return redirect(url_for('login'))
     return render_template('login.html')
 
@@ -113,6 +116,7 @@ def login():
             return redirect(url_for('home'))
         else:
             flash('Invalid email or password.', 'danger')
+            return redirect(url_for('login'))
 
     return render_template('login.html')
 
@@ -136,8 +140,13 @@ def timeseries_forecast():
 @app.route("/hotspot-detection")
 @login_required
 def hotspot_detection():
-    # Get unique countries from dataset
-    countries = sorted(df['Country'].unique().tolist())
+    # Get unique countries from dataset (guard against missing/empty data)
+    countries = []
+    try:
+        if not df.empty and 'Country' in df.columns:
+            countries = sorted([c for c in df['Country'].dropna().unique().tolist() if str(c).strip() != ''])
+    except Exception:
+        countries = []
     return render_template("hotspot_detection.html", countries=countries)
 
 @app.route("/graphs")
@@ -160,17 +169,39 @@ def graphs():
                 if not data:
                     continue
                 # Handle both v1 and v2 plotly mimetypes
-                plotly_json = data.get("application/vnd.plotly.v1+json") or data.get("application/vnd.plotly.v2+json")
+                plotly_json = (
+                    data.get("application/vnd.plotly.v1+json")
+                    or data.get("application/vnd.plotly.v2+json")
+                    or data.get("application/json")
+                    or data.get("application/vnd.plotly.figure+json")
+                )
                 if plotly_json:
                     try:
                         # plotly_json may already be a dict-like structure
-                        fig = pio.from_json(json.dumps(plotly_json))
-                        html_div = pio.to_html(fig, include_plotlyjs='cdn', full_html=False)
+                        # Create Figure from dict or JSON string
+                        if isinstance(plotly_json, str):
+                            fig = pio.from_json(plotly_json)
+                        elif isinstance(plotly_json, dict):
+                            try:
+                                fig = go.Figure(plotly_json)
+                            except Exception:
+                                fig = pio.from_json(json.dumps(plotly_json))
+                        else:
+                            # Fallback: try to dump then load
+                            fig = pio.from_json(json.dumps(plotly_json))
+
+                        # Render HTML for the figure; include_plotlyjs=True is broadly compatible
+                        html_div = pio.to_html(fig, include_plotlyjs=True, full_html=False)
 
                         # Extract a friendly title
                         title = None
                         try:
-                            title = fig.layout.title.text if fig.layout and fig.layout.title else None
+                            title_obj = getattr(fig.layout, 'title', None)
+                            if title_obj is None:
+                                title = None
+                            else:
+                                # title may be a string or an object with .text
+                                title = title_obj.text if hasattr(title_obj, 'text') and title_obj.text else str(title_obj)
                         except Exception:
                             title = None
                         if not title:
@@ -179,8 +210,11 @@ def graphs():
                         # Generate basic insights heuristically from traces
                         insights = {"summary": None, "stats": [], "trends": [], "highlights": [], "conclusion": None}
                         try:
-                            num_traces = len(fig.data) if fig.data is not None else 0
-                            chart_type = getattr(fig.data[0], 'type', '').lower() if num_traces else ''
+                            num_traces = len(fig.data) if getattr(fig, 'data', None) is not None else 0
+                            chart_type = ''
+                            if num_traces:
+                                first_trace = fig.data[0]
+                                chart_type = getattr(first_trace, 'type', '') or getattr(first_trace, 'mode', '') or ''
                             if num_traces:
                                 insights["summary"] = f"{num_traces} trace{'s' if num_traces != 1 else ''} • {chart_type or 'chart'}"
 
@@ -190,8 +224,30 @@ def graphs():
                                 y_values = None
                                 x_values = None
                                 try:
-                                    y_values = list(trace.y) if hasattr(trace, 'y') and trace.y is not None else None
-                                    x_values = list(trace.x) if hasattr(trace, 'x') and trace.x is not None else None
+                                    raw_y = getattr(trace, 'y', None)
+                                    raw_x = getattr(trace, 'x', None)
+
+                                    if raw_y is not None:
+                                        if isinstance(raw_y, (list, tuple, np.ndarray, pd.Series)):
+                                            y_values = list(raw_y)
+                                        elif hasattr(raw_y, 'tolist'):
+                                            y_values = list(raw_y.tolist())
+                                        else:
+                                            try:
+                                                y_values = list(raw_y)
+                                            except Exception:
+                                                y_values = None
+
+                                    if raw_x is not None:
+                                        if isinstance(raw_x, (list, tuple, np.ndarray, pd.Series)):
+                                            x_values = list(raw_x)
+                                        elif hasattr(raw_x, 'tolist'):
+                                            x_values = list(raw_x.tolist())
+                                        else:
+                                            try:
+                                                x_values = list(raw_x)
+                                            except Exception:
+                                                x_values = None
                                 except Exception:
                                     y_values = None
                                     x_values = None
@@ -252,11 +308,13 @@ def graphs():
                                     try:
                                         x_series = pd.to_datetime(pd.Series(x_values), errors='coerce')
                                         if x_series.notna().sum() >= 2:
-                                            order = np.argsort(x_series.values)
+                                            # Ensure we pass a NumPy ndarray to np.argsort to avoid ExtensionArray type issues
+                                            order = np.argsort(x_series.to_numpy())
                                             y_series = pd.Series(y_values, dtype='float').iloc[order]
                                             x_sorted = x_series.iloc[order]
                                             y_sorted = y_series.values
                                             y_sorted = y_sorted[np.isfinite(y_sorted)] if len(y_sorted) else y_sorted
+                                            y_sorted = np.asarray(y_sorted)  # Ensure NumPy array for np.diff
                                             if len(y_sorted) >= 2:
                                                 start, end = x_sorted.iloc[0], x_sorted.iloc[-1]
                                                 ts_delta = float(y_sorted[-1] - y_sorted[0])
